@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factory Line Efficiency</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+    h2 { text-align: center; }
+    input { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; margin-top: 10px; }
+    .result { margin-top: 20px; font-weight: bold; font-size: 1.2em; text-align: center; }
+    label { display: inline-block; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Factory Line Efficiency</h2>
+
+  <div>
+    <label><input type="radio" name="mode" value="production" checked> Prod from Eff</label>
+    <label><input type="radio" name="mode" value="efficiency"> Eff from Prod</label>
+  </div>
+
+  <div id="inputs" style="margin-top: 20px;">
+    <!-- Input fields will appear here -->
+  </div>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    const inputsDiv = document.getElementById('inputs');
+    const resultDiv = document.getElementById('result');
+    let mode = 'production';
+
+    const productionFields = [
+      { name: 'efficiency', placeholder: 'Efficiency (%)' },
+      { name: 'workingMinutes', placeholder: 'Working Minutes' },
+      { name: 'lineCadre', placeholder: 'Line Cadre' },
+      { name: 'smv', placeholder: 'SMV (min)' }
+    ];
+
+    const efficiencyFields = [
+      { name: 'production', placeholder: 'Production Output' },
+      { name: 'workingMinutes', placeholder: 'Working Minutes' },
+      { name: 'lineCadre', placeholder: 'Line Cadre' },
+      { name: 'smv', placeholder: 'SMV (min)' }
+    ];
+
+    function renderInputs() {
+      inputsDiv.innerHTML = '';
+      const fields = mode === 'production' ? productionFields : efficiencyFields;
+      fields.forEach(f => {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = f.name;
+        input.placeholder = f.placeholder;
+        inputsDiv.appendChild(input);
+      });
+      resultDiv.innerHTML = '';
+    }
+
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', e => {
+        mode = e.target.value;
+        renderInputs();
+      });
+    });
+
+    function calculate() {
+      if(mode === 'production') {
+        const eff = parseFloat(document.getElementById('efficiency').value);
+        const wm = parseFloat(document.getElementById('workingMinutes').value);
+        const lc = parseFloat(document.getElementById('lineCadre').value);
+        const smv = parseFloat(document.getElementById('smv').value);
+        if(!eff || !wm || !lc || !smv) { alert("Please enter all values."); return; }
+        const prod = Math.round((eff * wm * lc) / (smv * 100));
+        resultDiv.innerText = `Production Output: ${prod} pcs`;
+      } else {
+        const prod = parseFloat(document.getElementById('production').value);
+        const wm = parseFloat(document.getElementById('workingMinutes').value);
+        const lc = parseFloat(document.getElementById('lineCadre').value);
+        const smv = parseFloat(document.getElementById('smv').value);
+        if(!prod || !wm || !lc || !smv) { alert("Please enter all values."); return; }
+        const eff = (prod * smv) / (wm * lc) * 100;
+        resultDiv.innerText = `Line Efficiency: ${eff.toFixed(2)} %`;
+      }
+    }
+
+    renderInputs();
+  </script>
+</body>
+</html>
